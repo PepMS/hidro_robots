@@ -1,27 +1,33 @@
 <?xml version="1.0"?>
 <sdf version="1.7">
-  <world name="car_world">
+  <world name="world_borinot">
+
     <physics name="1ms" type="ignored">
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1.0</real_time_factor>
     </physics>
+
     <plugin
       filename="libignition-gazebo-physics-system.so"
       name="ignition::gazebo::systems::Physics">
     </plugin>
+
     <plugin
       filename="libignition-gazebo-user-commands-system.so"
       name="ignition::gazebo::systems::UserCommands">
     </plugin>
+
     <plugin
       filename="libignition-gazebo-scene-broadcaster-system.so"
       name="ignition::gazebo::systems::SceneBroadcaster">
     </plugin>
 
+
     <plugin
-      filename="libSampleSystem.so"
-      name="eagle_gazebo::SampleSystem2">
+      filename="ignition-gazebo-forcetorque-system"
+      name="ignition::gazebo::systems::ForceTorque">
     </plugin>
+
 
     <gui fullscreen="0">
 
@@ -58,9 +64,9 @@
 
         <play_pause>true</play_pause>
         <step>true</step>
-        <start_paused>false</start_paused>
-        <service>/world/car_world/control</service>
-        <stats_topic>/world/car_world/stats</stats_topic>
+        <start_paused>true</start_paused>
+        <service>/world/world_borinot/control</service>
+        <stats_topic>/world/world_boriont/stats</stats_topic>
       </plugin>
 
       <!-- World statistics -->
@@ -84,7 +90,7 @@
         <real_time>true</real_time>
         <real_time_factor>true</real_time_factor>
         <iterations>true</iterations>
-        <topic>/world/car_world/stats</topic>
+        <topic>/world/world_borinot/stats</topic>
 
       </plugin>
 
@@ -136,7 +142,18 @@
 
 
     <model name='borinot'>
-      <pose>0 0 2.0 0 0 0</pose>
+
+      <!-- <plugin filename="libignition-gazebo-imu-system.so"
+        name="ignition::gazebo::systems::Imu">
+      </plugin> -->
+
+
+    <plugin
+    filename="libSampleSystem.so"
+    name="eagle_gazebo::SampleSystem2">
+  </plugin>
+
+      <pose>1.5 0 2.0 0 0 0</pose>
       <link name='borinot__base_link'>
         <pose>0 0 0 0 0 0</pose>
         <inertial>
@@ -151,7 +168,6 @@
             <izz>0.029599</izz>
           </inertia>
         </inertial>
-        <!-- TODO: check that is touching the ground -->
         <collision name='base_link_collision'>
           <pose>0 0 0.0 0 0 0</pose>
           <geometry>
@@ -176,7 +192,6 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <!-- TODO: add specific borinot mesh -->
               <uri>model://hidro_robots/robots/borinot/meshes/borinot__base_link.dae</uri>
             </mesh>
           </geometry>
@@ -189,7 +204,22 @@
         </visual>
         <gravity>1</gravity>
         <velocity_decay />
+
+        <sensor name="imu_sensor" type="imu">
+          <always_on>1</always_on>
+          <update_rate>500</update_rate>
+          <visualize>true</visualize>
+          <topic>imu</topic>
+        </sensor>
+
       </link>
+
+      <plugin
+        filename="gz-sim-joint-state-publisher-system"
+        name="gz::sim::systems::JointStatePublisher">
+      </plugin>
+
     </model>
+
   </world>
 </sdf>
