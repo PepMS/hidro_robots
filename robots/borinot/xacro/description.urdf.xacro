@@ -11,24 +11,79 @@
 
   <!-- arguments -->
   <xacro:arg name="simulation" default="true" />
-  <xacro:arg name="event_based_sim" default="false" />
+  <xacro:arg name="simulation_sync" default="false" />
+  <xacro:arg name="simulation_px4" default="false" />
 
   <!-- properties -->
   <xacro:property name="simulation" value="$(arg simulation)" />
-  <xacro:property name="event_based_sim" value="$(arg event_based_sim)" />
+  <xacro:property name="simulation_sync" value="$(arg simulation_sync)" />
+  <xacro:property name="simulation_px4" value="$(arg simulation_px4)" />
+
+  <xacro:if value="${simulation_sync}">
+    <xacro:property name="simulation_px4" value="false" />
+  </xacro:if>
 
   <xacro:borinot_platform
     robot_name="borinot"
     simulation="${simulation}"
-    event_based_sim="${event_based_sim}"
+    simulation_sync="${simulation_sync}"
+    simulation_px4="${simulation_px4}"
     has_arm="false"
   />
 
   <xacro:if value="${simulation}">
-    <xacro:if value="${event_based_sim}">
+    <xacro:if value="${simulation_sync}">
       <gazebo>
+        <plugin name='eagle_ros2_gz::EagleGzSyncSimPlugin'
+          filename='libeagle_gz_sync_sim_plugin.so'>
+          <simulationRate>2000</simulationRate>
+          <actuationRate>500</actuationRate>
+          <ramStateTopic>/borinot/uam_state</ramStateTopic>
+          <ramControlTopic>/borinot/uam_control</ramControlTopic>
+          <platform_params>
+            <baselinkName>borinot__base_link</baselinkName>
+            <thrustToTorqueRatio>0.01393568</thrustToTorqueRatio>
+            <thrustBias>1.0</thrustBias>
+            <rotor_params>
+              <number>0</number>
+              <linkName>borinot__rotor0</linkName>
+              <turningDirection>-1</turningDirection>
+            </rotor_params>
+            <rotor_params>
+              <number>1</number>
+              <linkName>borinot__rotor1</linkName>
+              <turningDirection>1</turningDirection>
+            </rotor_params>
+            <rotor_params>
+              <number>2</number>
+              <linkName>borinot__rotor2</linkName>
+              <turningDirection>-1</turningDirection>
+            </rotor_params>
+            <rotor_params>
+              <number>3</number>
+              <linkName>borinot__rotor3</linkName>
+              <turningDirection>1</turningDirection>
+            </rotor_params>
+            <rotor_params>
+              <number>4</number>
+              <linkName>borinot__rotor4</linkName>
+              <turningDirection>1</turningDirection>
+            </rotor_params>
+            <rotor_params>
+              <number>5</number>
+              <linkName>borinot__rotor5</linkName>
+              <turningDirection>-1</turningDirection>
+            </rotor_params>
+          </platform_params>
+        </plugin>
+      </gazebo>
+    </xacro:if>
+
+    <xacro:unless value="${simulation_sync}">
+      <xacro:unless value="${simulation_px4}">
+        <!-- <gazebo>
         <plugin name='eagle_gazebo_event_base_sim_plugin'
-          filename='libeagle_gazebo_event_based_sim_plugin.so'>
+          filename='libeagle_gazebo_simulation_sync_plugin.so'>
           <simulationRate>2000</simulationRate>
           <actuationRate>500</actuationRate>
           <uamStateTopic>/borinot/uam_state</uamStateTopic>
@@ -67,10 +122,10 @@
               <turningDirection>-1</turningDirection>
             </rotor_params>
           </platform_params>
-          <!-- here add the arm -->
         </plugin>
-      </gazebo>
-    </xacro:if>
+      </gazebo> -->
+      </xacro:unless>
+    </xacro:unless>
   </xacro:if>
 
 </robot>

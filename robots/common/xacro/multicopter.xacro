@@ -29,7 +29,7 @@
   </xacro:macro>
 
   <xacro:macro name="rotor"
-    params="platform_name rotor_number parent_link x y z direction simulation event_based_sim">
+    params="platform_name rotor_number parent_link x y z direction simulation simulation_px4">
 
     <xacro:property name="link_name" value="${platform_name}__rotor${rotor_number}" />
     <xacro:property name="joint_name" value="${platform_name}__j_rotor${rotor_number}" />
@@ -79,7 +79,8 @@
     </joint>
 
     <xacro:if value="${simulation}">
-      <xacro:unless value="${event_based_sim}">
+      <!-- I should check also here simulation_sync, for safety -->
+      <xacro:if value="${simulation_px4}">
         <gazebo>
           <plugin name='${joint_name}_plugin' filename='libgazebo_motor_model.so'>
             <robotNamespace></robotNamespace>
@@ -99,7 +100,7 @@
             <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
           </plugin>
         </gazebo>
-      </xacro:unless>
+      </xacro:if>
     </xacro:if>
   </xacro:macro>
 

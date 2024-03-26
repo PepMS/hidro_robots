@@ -6,7 +6,7 @@
   <xacro:include
     filename="$(find hidro_robots)/robots/common/xacro/sensors.xacro" />
 
-  <xacro:macro name="borinot_platform" params="robot_name simulation event_based_sim has_arm">
+  <xacro:macro name="borinot_platform" params="robot_name simulation simulation_sync simulation_px4 has_arm">
 
     <xacro:property name="platform_name" value="borinot" />
 
@@ -49,7 +49,7 @@
       z="0.05"
       direction="cw"
       simulation="${simulation}"
-      event_based_sim="${event_based_sim}"
+      simulation_px4="${simulation_px4}"
     />
 
     <xacro:rotor
@@ -61,7 +61,7 @@
       z="0.05"
       direction="ccw"
       simulation="${simulation}"
-      event_based_sim="${event_based_sim}"
+      simulation_px4="${simulation_px4}"
     />
 
     <xacro:rotor
@@ -73,7 +73,7 @@
       z="0.05"
       direction="cw"
       simulation="${simulation}"
-      event_based_sim="${event_based_sim}"
+      simulation_px4="${simulation_px4}"
     />
 
     <xacro:rotor
@@ -85,7 +85,7 @@
       z="0.05"
       direction="ccw"
       simulation="${simulation}"
-      event_based_sim="${event_based_sim}"
+      simulation_px4="${simulation_px4}"
     />
 
     <xacro:rotor
@@ -97,7 +97,7 @@
       z="0.05"
       direction="ccw"
       simulation="${simulation}"
-      event_based_sim="${event_based_sim}"
+      simulation_px4="${simulation_px4}"
     />
 
     <xacro:rotor
@@ -109,12 +109,12 @@
       z="0.05"
       direction="cw"
       simulation="${simulation}"
-      event_based_sim="${event_based_sim}"
+      simulation_px4="${simulation_px4}"
     />
 
     <xacro:if value="${simulation}">
 
-      <xacro:unless value="${event_based_sim}">
+      <xacro:if value="${simulation_px4}">
         <xacro:px4_plugins
           robot_name="${robot_name}"
           platform_name="${platform_name}"
@@ -196,7 +196,7 @@
             </control_channels>
           </plugin>
         </gazebo>
-      </xacro:unless>
+      </xacro:if>
     </xacro:if>
   </xacro:macro>
 </robot>

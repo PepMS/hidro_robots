@@ -9,11 +9,11 @@
 
   <!-- arguments -->
   <xacro:arg name="simulation" default="true" />
-  <xacro:arg name="event_based_sim" default="false" />
+  <xacro:arg name="simulation_sync" default="false" />
 
   <!-- properties -->
   <xacro:property name="simulation" value="$(arg simulation)" />
-  <xacro:property name="event_based_sim" value="$(arg event_based_sim)" />
+  <xacro:property name="simulation_sync" value="$(arg simulation_sync)" />
   <xacro:property name="robot_name" value="borinot_flying_arm_2" />
 
 
@@ -21,13 +21,13 @@
     robot_name="${robot_name}"
     simulation="${simulation}"
     has_arm="true"
-    event_based_sim="${event_based_sim}"
+    simulation_sync="${simulation_sync}"
   />
 
   <xacro:flying_arm_2
     simulation="${simulation}"
     base_link_name="borinot__base_link"
-    event_based_sim="${event_based_sim}"
+    simulation_sync="${simulation_sync}"
   />
 
   <gazebo>
@@ -43,10 +43,10 @@
   </gazebo>
 
   <xacro:if value="${simulation}">
-    <xacro:if value="${event_based_sim}">
+    <xacro:if value="${simulation_sync}">
       <gazebo>
         <plugin name='eagle_gazebo_event_base_sim_plugin'
-          filename='libeagle_gazebo_event_based_sim_plugin.so'>
+          filename='libeagle_gazebo_simulation_sync_plugin.so'>
           <simulationRate>2000</simulationRate>
           <actuationRate>500</actuationRate>
           <uamStateTopic>/${robot_name}/uam_state</uamStateTopic>

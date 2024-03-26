@@ -38,40 +38,30 @@ def generate_launch_description():
     )
     ld.add_action(simulation_sync_arg)
 
-    # GAZEBO
-    world_filename = PythonExpression(
-        [
-            "'event_based.world' if ",
-            LaunchConfiguration("simulation_sync"),
-            " else 'basic_world.world'",
-        ]
-    )
+    # GZ
+    world_filename = "ign_world.world"
     world_path = PathJoinSubstitution(
         [FindPackageShare("hidro_robots"), "worlds", world_filename]
     )
 
+    # Use the line when RViz is ready
+    # enable_gui = PythonExpression(["' -s' if ", LaunchConfiguration('simulation_sync'), " else ''"])
     enable_gui = PythonExpression(
-        ["'false' if ", LaunchConfiguration("simulation_sync"), " else 'true'"]
+        ["' ' if ", LaunchConfiguration("simulation_sync"), " else ''"]
     )
 
-    gazebo = IncludeLaunchDescription(
+    gz = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [
                 PathJoinSubstitution(
-                    [FindPackageShare("gazebo_ros"), "launch", "gazebo.launch.py"]
+                    [FindPackageShare("ros_gz_sim"), "launch", "gz_sim.launch.py"]
                 )
             ]
         ),
-        launch_arguments={
-            "verbose": "true",
-            "pause": "false",
-            "world": world_path,
-            "lockstep": "true",
-            "gui": enable_gui,
-        }.items(),
+        launch_arguments={"gz_args": [world_path, enable_gui]}.items(),
     )
 
-    ld.add_action(gazebo)
+    ld.add_action(gz)
 
     # XACRO GAZEBO
     robot_description_content = Command(
@@ -89,7 +79,7 @@ def generate_launch_description():
             ),
             " simulation_sync:=",
             LaunchConfiguration("simulation_sync"),
-            " simulation_px4:=True"
+            " simulation_px4:=False",
         ]
     )
 
@@ -107,20 +97,32 @@ def generate_launch_description():
     ld.add_action(node_robot_state_publisher)
 
     # SPAWN ENTITY
-    spawn_entity = Node(
-        package="gazebo_ros",
-        executable="spawn_entity.py",
-        arguments=[
-            "-topic",
-            ["gazebo", "/robot_description"],
-            "-entity",
-            LaunchConfiguration("robot_name"),
-            "-x 0",
-            "-y 0",
-            "-z 0.3",
+    # spawn_entity = Node(
+    #     package="ros_gz_sim",
+    #     executable="create",
+    #     arguments=[
+    #         "-topic",
+    #         ["gazebo", "/robot_description"],
+    #         "-entity",
+    #         LaunchConfiguration("robot_name"),
+    #         "-x 0",
+    #         "-y 0",
+    #         "-z 1.0",
+    #     ],
+    #     output="screen",
+    # )
+
+    # TODO: this is a workaround. The proper command is to call the command above, 
+    # with Node. But that command does not place the robot at the specified initial position.
+    spawn_entity = ExecuteProcess(
+        cmd=[
+            [
+                "ros2 run ros_gz_sim create -topic /gazebo/robot_description -z 1.0"
+            ]
         ],
-        output="screen",
+        shell=True,
     )
+
     ld.add_action(spawn_entity)
 
     return ld
