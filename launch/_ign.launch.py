@@ -46,9 +46,9 @@ def generate_launch_description():
 
     # Use the line when RViz is ready
     # enable_gui = PythonExpression(["' -s' if ", LaunchConfiguration('simulation_sync'), " else ''"])
-    # enable_gui = PythonExpression(
-    #     ["'--verbose ' if ", LaunchConfiguration("simulation_sync"), " else ' --verbose '"]
-    # )
+    enable_gui = PythonExpression(
+        ["' ' if ", LaunchConfiguration("simulation_sync"), " else ' '"]
+    )
 
     gz = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
