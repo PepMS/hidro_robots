@@ -33,6 +33,7 @@
   />
 
   <xacro:if value="${simulation}">
+
     <xacro:if value="${simulation_sync}">
       <gazebo>
         <plugin name='eagle_ros2_gz::EagleGzSyncSimPlugin'
@@ -82,6 +83,7 @@
 
     <xacro:unless value="${simulation_sync}">
       <xacro:unless value="${simulation_px4}">
+
         <gazebo>
           
           <plugin name='eagle_ros2_gz::EagleGzRamStateSensorPlugin'

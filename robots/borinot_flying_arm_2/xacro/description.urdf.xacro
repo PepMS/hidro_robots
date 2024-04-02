@@ -32,8 +32,9 @@
 
   <xacro:flying_arm_2
     simulation="${simulation}"
-    base_link_name="borinot__base_link"
     simulation_sync="${simulation_sync}"
+    simulation_px4="${simulation_px4}"
+    base_link_name="borinot__base_link"
   />
 
   <xacro:if value="${simulation}">
@@ -96,14 +97,25 @@
 
     <xacro:unless value="${simulation_sync}">
       <xacro:unless value="${simulation_px4}">
+
         <gazebo>
-          
+
           <plugin name='eagle_ros2_gz::EagleGzRamStateSensorPlugin'
             filename='libeagle_gz_ram_state_sensor_plugin.so'>
             <ramStateTopic>/${robot_name}/ram_state</ramStateTopic>
             <platform_params>
               <linkName>borinot__base_link</linkName>
             </platform_params>
+            <arm_params>
+              <joint_params>
+                <number>0</number>
+                <jointName>flying_arm_2__j_bl_link1</jointName>
+              </joint_params>
+              <joint_params>
+                <number>1</number>
+                <jointName>flying_arm_2__j_link1_link2</jointName>
+              </joint_params>
+            </arm_params>
           </plugin>
 
           <plugin name='eagle_ros2_gz::EagleGzRamFtControllerPlugin'
@@ -144,6 +156,17 @@
                 <turningDirection>-1</turningDirection>
               </rotor_params>
             </platform_params>
+
+            <arm_params>
+              <joint_params>
+                <number>0</number>
+                <jointName>flying_arm_2__j_bl_link1</jointName>
+              </joint_params>
+              <joint_params>
+                <number>1</number>
+                <jointName>flying_arm_2__j_link1_link2</jointName>
+              </joint_params>
+            </arm_params>
           </plugin>
 
         </gazebo>

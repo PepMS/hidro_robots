@@ -1,6 +1,6 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:macro name="flying_arm_2" params="simulation simulation_sync base_link_name">
+  <xacro:macro name="flying_arm_2" params="simulation simulation_sync simulation_px4 base_link_name">
 
     <xacro:property name="platform_name" value="borinot" />
 
@@ -110,7 +110,7 @@
     </joint>
 
     <xacro:if value="${simulation}">
-      <xacro:unless value="${simulation_sync}">
+      <xacro:if value="${simulation_px4}">
         <gazebo>
           <plugin name="odri_gazebo" filename="libodri_gazebo_plugin.so">
             <joint name="flying_arm_2__j_bl_link1">
@@ -127,7 +127,7 @@
             </joint>
           </plugin>
         </gazebo>
-      </xacro:unless>
+      </xacro:if>
     </xacro:if>
   </xacro:macro>
 </robot>
